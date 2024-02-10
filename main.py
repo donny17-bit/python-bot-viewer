@@ -7,6 +7,7 @@ filemoon.wait_start = 5
 filemoon.wait_end = 20
 filemoon.duration = 5
 filemoon.with_proxy = False
+filemoon.is_sequential = False
 loops = 3
 browser = 2
 
@@ -48,6 +49,19 @@ def isProxy_input():
     else:
         print("Invalid input. Please enter 'y' or 'n'.")
         isProxy_input()
+
+
+def isSequential_input():
+    seq = input("Wanna use proxy in sequential(y/n) : ")
+    seqs = seq.lower()
+
+    if seqs == "y":
+        filemoon.is_sequential = True
+    elif seqs == "n":
+        filemoon.is_sequential = False
+    else:
+        print("Invalid input. Please enter 'y' or 'n'.")
+        isSequential_input()
 
 
 def is_number(input_str, input_str1):
@@ -119,15 +133,19 @@ def run():
         headless_input()
         isCheckIp_input()
         isProxy_input()
+        if filemoon.with_proxy:
+            isSequential_input()
+
         # wait_input()
         duration_input()
         loop_input()
         browser_input()
 
-        with open("proxy.txt", "r") as file:
-            proxy = file.read().splitlines()
+        if filemoon.is_sequential:
+            with open("proxy.txt", "r") as file:
+                proxy = file.read().splitlines()
 
-        proxy_picker = len(proxy) - 1
+            proxy_picker = len(proxy) - 1
         current_proxy = 0
 
         # wrapper to catch thread error
@@ -142,7 +160,8 @@ def run():
 
         # run the thread
         for n in range(loops):
-            print("current proxy : ", proxy[current_proxy])
+            if filemoon.is_sequential:
+                print("current proxy : ", proxy[current_proxy])
 
             for i in range(browser):
                 # thread = Thread(target=browser_main_wrapper, args=(i,))
@@ -155,10 +174,11 @@ def run():
                 thread.join()
 
             # pick proxy sequential from proxy list
-            if current_proxy == proxy_picker:
-                current_proxy = 0
-            else:
-                current_proxy = current_proxy + 1
+            if filemoon.is_sequential:
+                if current_proxy == proxy_picker:
+                    current_proxy = 0
+                else:
+                    current_proxy = current_proxy + 1
 
     except Exception as e:
         print("error occured in main file : ", e)

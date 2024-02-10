@@ -12,6 +12,7 @@ isCheckIp = True
 # drivers = []
 headless = False
 with_proxy = False
+is_sequential = False
 
 
 def browser_actions(driver, url):
@@ -81,14 +82,13 @@ def browser(index_proxy):
             proxys = file.read().splitlines()
 
         # pilih proxy yang ingin dibuka
-        # proxy_picker = random.randrange(0, len(proxys) - 1, 1)
-
-        # print("Using proxy : ", proxys[proxy_picker])
-        print("Using proxy : ", proxys[index_proxy])
-
-        # Set up the SOCKS5 proxy
-        # http_proxy = f"socks5://{proxys[proxy_picker]}"
-        http_proxy = f"socks5://{proxys[index_proxy]}"
+        if is_sequential:
+            print("Using proxy : ", proxys[index_proxy])
+            http_proxy = f"socks5://{proxys[index_proxy]}"
+        else:
+            proxy_picker = random.randrange(0, len(proxys) - 1, 1)
+            print("Using proxy : ", proxys[proxy_picker])
+            http_proxy = f"socks5://{proxys[proxy_picker]}"
 
     chrome_options = webdriver.ChromeOptions()
     if headless:
