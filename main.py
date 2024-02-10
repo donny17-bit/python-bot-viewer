@@ -1,6 +1,5 @@
 import filemoon
-from threading import Thread, Event
-import time
+from threading import Thread
 
 filemoon.headless = False
 filemoon.isCheckIp = True
@@ -161,8 +160,8 @@ def run():
             else:
                 current_proxy = current_proxy + 1
 
-    # except Exception as e:
-    #     print("error occured in main file : ", e)
+    except Exception as e:
+        print("error occured in main file : ", e)
     finally:
         print("Filemoon Bot views done")
 
